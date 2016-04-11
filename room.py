@@ -1,7 +1,7 @@
 """Module containing Room class."""
 
 from general_funcs import print_line
-from Item import Item
+from item import Item
 import json
 import os
 import sys

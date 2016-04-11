@@ -7,9 +7,9 @@ import pickle
 import sys
 import os
 
-from Human import Human, Player, NPC
-from Room import Room, all_rooms
-from Item import Item, Inventory, all_items
+from human import Human, Player, NPC
+from room import Room, all_rooms
+from item import Item, Inventory, all_items
 
 from general_funcs import *
 
