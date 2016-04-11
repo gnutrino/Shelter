@@ -2,9 +2,8 @@
 Main screens and classes for the game
 """
 from player import Player
-from human import generate_dwellers
 from room import Room
-from shelter import Shelter
+from shelter import Shelter, generate_dwellers
 
 class GameScreen(object):
     """
@@ -70,7 +69,7 @@ def new_game(shell, stack):
 
     #create and populate shelter
     gamestate.shelter = Shelter()
-    gamestate.shelter.people = generate_dwellers(5)
+    gamestate.shelter.people = generate_dwellers(5, gamestate)
 
     #Add some starting rooms
     gamestate.shelter.rooms = [

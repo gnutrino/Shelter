@@ -7,9 +7,8 @@ from item import Inventory
 class Player(Human):
     """Player class, inherits Human attributes."""
 
-    def __init__(
-            self, first_name=None, day_of_birth=0,
-            parent_1=None, parent_2=None, age=21, gender='M'):
+    def __init__(self, first_name, surname, gender, age=21, day_of_birth=0,
+                 father=None, mother=None):
         """Player class constructor.
 
         Arguments:
@@ -20,10 +19,8 @@ class Player(Human):
         age -- age of player
         gender -- gender of player
         """
-        print("in Player.__init__, gender = {}".format(gender))
-        super().__init__(
-            first_name, day_of_birth,
-            parent_1, parent_2, age, gender)
+        super().__init__(first_name, surname, gender, age, day_of_birth,
+                         father, mother)
         player_stats = ["medic", "crafting", "tactician", "cooking",
                         "barter", "inspiration", "scrapper",
                         "electrician"]
@@ -42,14 +39,12 @@ class Player(Human):
 
         first_name = shell.get_name("What is your first name?")
         surname    = shell.get_name("What is your surname?")
-        father = Human(surname=surname)
-
-        maiden_name = shell.get_name("What is your mother's maiden name?")
-        mother = Human(surname=maiden_name)
 
         gender = shell.choose_from("What is your gender?", [('Female', 'F'), ('Male', 'M')])
 
-        return cls(first_name, 0, father, mother, 21, gender)
+        age = shell.get_int("How old are you?")
+
+        return cls(first_name, surname, gender, age)
         
     def level_up(self):
         super().level_up()

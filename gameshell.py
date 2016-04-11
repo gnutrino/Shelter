@@ -107,6 +107,24 @@ class GameShell(object):
 
             self.print_line("Please enter a single word")
 
+    def get_int(self, prompt):
+        """
+        Keeps outputting prompt and reading input until user enters a valid int
+
+        Arguments:
+        prompt - prompt to print
+
+        Returns:
+        int -- the inputted integer
+        """
+        while True:
+            line = self.readline(prompt + ' ')
+            try:
+                return int(line)
+            except ValueError:
+                self.print_line("Please enter and integer")
+                continue
+
     def choose_from(self, text, choices):
         """
         Outputs a menu style selection and returns the user's selection

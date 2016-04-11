@@ -1,41 +1,44 @@
 """Module containing all Human classes."""
-import random
-
 from general_funcs import print_line, SLOW, FAST, NORMAL
 
 class Human(object):
     """Basic class for all humans in game."""
 
-    def __init__(
-            self, first_name=None, day_of_birth=0,
-            parent_1=None, parent_2=None, age=0, gender='M', surname=None):
+    def __init__(self, first_name, surname, gender, age=21, day_of_birth=0, 
+                 father=None, mother=None):
         """Constructor for Human class.
 
         Arguments:
         first_name -- first name of Human
-        day_of_birth -- day Human was born
-        parent_1 -- name of Human's father
-        parent_2 -- name of Human's mother
-        age -- age of Human
+        surname    -- surname of Human, if None and father is given, inherits
+                      from father
         gender -- gender of Human
+        age -- age of Human
+        day_of_birth -- day Human was born
+        father -- Human's father
+        mother -- Human's mother
         """
         self.alive = True
-        self.name = first_name  # First name
-        self.day_of_birth = day_of_birth
-        self.parent_1 = parent_1  # Surname
-        self.parent_2 = parent_2  # Surname
-        self.age = age
+
+        self.first_name = first_name
+        if surname is None and father is not None:
+            surname = father.surname
+        self.surname = surname
+
         self.gender = gender.upper()
+        self.day_of_birth = day_of_birth
+
+        self.father = father
+        self.mother = mother
+
         self.hunger = 0
         self.thirst = 0
-        try:
-            self.surname = self.parent_1.surname
-        except:
-            self.surname = surname
-        self.partner = ""
+
+        self.partner = None
 
         # The stats of the person. Affects the production of
         # room the person has been assigned to.
+        # TODO: randomise starting stats for NPCs
         self.stats = {"strength": 1,
                       "perception": 1,
                       "endurance": 1,
@@ -43,10 +46,10 @@ class Human(object):
                       "intelligence": 1,
                       "luck": 1
                      }
-        
-        self.assigned_room = ""  # Keeps track of where person is working.
-        self.children = []  # List of all children
-        self.partner = ""
+
+        self.work_room = None
+        self.children = []
+
         self.level = 1  # Determines production efficiency
         self.XP = 0
 
@@ -56,7 +59,7 @@ class Human(object):
         Returns:
         str -- "Firstname Lastname"
         """
-        return "{} {}".format(self.name, self.surname)
+        return "{} {}".format(self.first_name, self.surname)
 
     def print_(self):
         """Print name and attributes."""
@@ -155,20 +158,6 @@ class Human(object):
         if self.HP > 99:  # Truncates health
             self.HP = 100
 
-    def rebirth(self):
-        """Don't know if I'll ever use this."""
-        self.age = 0
-        if self.gender == "m":
-            print_line(
-                self.name +
-                " has been reborn and his stats have been reset")
-        else:
-            print_line(
-                self.name +
-                " has been reborn and her stats have been reset")
-        self.stats["strength"] = self.perception = self.endurance =  1
-        self.stats["charisma"] = self.luck = self.intelligence = 1
-
     def mature(self, person):
         """Increment Human's age.
 
@@ -257,22 +246,22 @@ class Human(object):
 class NPC(Human):
     """NPC class, inherits Human attributes."""
 
-    def __init__(
-            self, first_name, day_of_birth,
-            parent_1, parent_2, age, gender, surname=None):
+    def __init__(self, first_name, surname, gender, age=21, day_of_birth=0, 
+                 father=None, mother=None):
         """NPC class constructor.
 
         Arguments:
-        first_name -- first name of NPC
+        first_name   -- first name of NPC
+        surname      -- surname of NPC
+        gender       -- gender of NPC
+        age          -- age of NPC
         day_of_birth -- day NPC was born on
-        parent_1 -- name of father
-        parent_2 -- name of mother
-        age -- age of NPC
-        gender -- gender of NPC
+        father       -- father of NPC
+        father       -- mother of NPC
         """
-        Human.__init__(
-            self, first_name, day_of_birth,
-            parent_1, parent_2, age, gender, surname)
+        super().__init__(first_name, surname, gender, age, day_of_birth,
+                         father, mother)
+
         self.current_activity = ""
         self.days_active = 0
         self.activity_limit = 0
@@ -292,60 +281,3 @@ class NPC(Human):
             print_line("\nInvalid choice.\n")
             self.level -= 1
             self.level_up()
-
-
-def generate_dwellers(num, gamestate=None):
-    """
-    Generates and returns 'num' random shelter dwellers
-
-    Arguments:
-    num -- Number of NPCs to generate
-    gamestate -- (optional) current state of the game, used to set birth date
-
-    Returns:
-    people -- List of generated NPCs
-    """
-    names = [
-        "Thompson",
-        "Elenor",
-        "Codsworth",
-        "Sharmak",
-        "Luthor",
-        "Marshall",
-        "Cole",
-        "Diven",
-        "Davenport",
-        "John",
-        "Max",
-        "Lex",
-        "Leth",
-        "Exavor"
-        ]
-
-    people = []
-
-    if gamestate is not None:
-        day = gamestate.day
-    else:
-        day = 0
-
-    while len(people) < num:
-        first_name = random.choice(names)
-        surname = random.choice(names)
-        if first_name == surname:
-            continue
-
-        #TODO: Add logic to avoid adding an already existing name from
-        #gamestate
-
-        people.append(NPC(
-            first_name,
-            day,
-            None,
-            "Alena",
-            21,
-            random.choice(['M', 'F']),
-        ))
-
-    return people
-
