@@ -1,7 +1,7 @@
 """Module containing all Human classes."""
+import random
 
 from general_funcs import print_line, SLOW, FAST, NORMAL
-
 
 class Human(object):
     """Basic class for all humans in game."""
@@ -72,6 +72,10 @@ class Human(object):
         for stat in self.stats.keys():
             print_line("   " + stat + " : " + str(self.stats[stat]))
         print_line("\n")
+
+    def update(self, shell, gamestate):
+        """stub function to contain daily code for people"""
+        print("{}.update is not implemented.".format(type(self).__name__))
         
     def see_stats(self):
         """Check stats of inhabitant."""
@@ -288,4 +292,60 @@ class NPC(Human):
             print_line("\nInvalid choice.\n")
             self.level -= 1
             self.level_up()
+
+
+def generate_dwellers(num, gamestate=None):
+    """
+    Generates and returns 'num' random shelter dwellers
+
+    Arguments:
+    num -- Number of NPCs to generate
+    gamestate -- (optional) current state of the game, used to set birth date
+
+    Returns:
+    people -- List of generated NPCs
+    """
+    names = [
+        "Thompson",
+        "Elenor",
+        "Codsworth",
+        "Sharmak",
+        "Luthor",
+        "Marshall",
+        "Cole",
+        "Diven",
+        "Davenport",
+        "John",
+        "Max",
+        "Lex",
+        "Leth",
+        "Exavor"
+        ]
+
+    people = []
+
+    if gamestate is not None:
+        day = gamestate.day
+    else:
+        day = 0
+
+    while len(people) < num:
+        first_name = random.choice(names)
+        surname = random.choice(names)
+        if first_name == surname:
+            continue
+
+        #TODO: Add logic to avoid adding an already existing name from
+        #gamestate
+
+        people.append(NPC(
+            first_name,
+            day,
+            None,
+            "Alena",
+            21,
+            random.choice(['M', 'F']),
+        ))
+
+    return people
 

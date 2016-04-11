@@ -1,6 +1,8 @@
 """Menu screens for use with GameShell"""
 from collections import OrderedDict
 
+from game import new_game
+
 class Menu(object):
 
     def __init__(self, name):
@@ -22,10 +24,6 @@ class Menu(object):
 def speed_change(shell, stack):
     speed = shell.choose_from("Change Speed", zip(shell.speeds, shell.speeds))
     shell.set_speed(speed)
-    return None
-
-def new_game(shell, stack):
-    shell.print_line("New Game not implemented")
     return None
 
 def load_game(shell, stack):

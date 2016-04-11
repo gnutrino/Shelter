@@ -6,17 +6,18 @@ import sys
 import os
 
 
-def all_items():
+def load_items(fn="items.json"):
     """Get a list of all items available in game.
 
     Returns:
     items -- list of all items
     """
-    fn = "items.json"
-    path = os.path.join(os.path.dirname(sys.argv[0]), fn)
-    with open(path) as i:
-        items = [item for item in json.loads(i.read())]
+    path = os.path.join(os.path.dirname(__file__), fn)
+    with open(path) as f:
+        items = [item for item in json.loads(f.read())]
     return items
+
+all_items = load_items()
 
 
 class Item(object):
@@ -89,7 +90,7 @@ class Item(object):
 class Inventory(dict):
     """Inventory class, inherits dict attributes."""
 
-    def __init__(self, items=[]):
+    def __init__(self, items=all_items):
         """Inventory class constructor, sets values to 0."""
         for item in items:
             self[item] = 0

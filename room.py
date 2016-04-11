@@ -92,6 +92,10 @@ class Room(object):  # Basic class for the rooms in the game.
             self.see_assigned()
         print()
 
+    def update(self, shell, gamesate):
+        """Stub function to hold daily code for each room"""
+        shell.print_line("Room.update is not yet implemented")
+
     def rush(self):
         """Rush building of Room."""
         self.rushed = True  # Lets game know this room has been rushed.

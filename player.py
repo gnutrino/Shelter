@@ -1,6 +1,8 @@
 """
 Player class and utility functions
 """
+from human import Human
+from item import Inventory
 
 class Player(Human):
     """Player class, inherits Human attributes."""
@@ -18,8 +20,9 @@ class Player(Human):
         age -- age of player
         gender -- gender of player
         """
-        Human.__init__(
-            self, first_name, day_of_birth,
+        print("in Player.__init__, gender = {}".format(gender))
+        super().__init__(
+            first_name, day_of_birth,
             parent_1, parent_2, age, gender)
         player_stats = ["medic", "crafting", "tactician", "cooking",
                         "barter", "inspiration", "scrapper",
@@ -27,16 +30,26 @@ class Player(Human):
         for stat in player_stats: #Adds player specific stats to stat 
             # dict
             self.stats[str(stat)] = 0
+
+        self.inventory = Inventory()
+
+    @classmethod
+    def create(cls, shell):
         """
-        self.medic = 0  # Improves healing capabilities of stimpacks
-        self.crafting = 0  # Chance to not use components when crafting.
-        self.tactician = 0  # Boosts defense.
-        self.cooking = 0  # Boosts production level of kitchen.
-        self.barter = 0  # Increases selling prices, decreases buying prices.
-        self.inspiration = 0  # Boosts production and defense.
-        self.scrapper = 0  # Boosts chance of bonus components when scrapping.
-        self.electrician = 0  # Boosts power production
+        creates and returns a player from user input
         """
+        shell.print_line()
+
+        first_name = shell.get_name("What is your first name?")
+        surname    = shell.get_name("What is your surname?")
+        father = Human(surname=surname)
+
+        maiden_name = shell.get_name("What is your mother's maiden name?")
+        mother = Human(surname=maiden_name)
+
+        gender = shell.choose_from("What is your gender?", [('Female', 'F'), ('Male', 'M')])
+
+        return cls(first_name, 0, father, mother, 21, gender)
         
     def level_up(self):
         super().level_up()
@@ -52,33 +65,9 @@ class Player(Human):
         #available choices
         for perk in perks:
             choice_dict[perk] = self.stats[perk]
-        """ #Old choice_dict dictionary
-        choice_dict = {
-        'strength':self.stats["strength"], 'perception':self.stats["perception"],
-        'endurance':self.stats["endurance"], 'charisma':self.stats["charisma"],
-        'intelligence':self.stats["intelligence"], 'luck':self.stats["luck"],
-        'medic':self.stats["medic"], 'crafting':self.stats["crafting"],
-        'tactician':self.stats["tactician"], 'cooking':self.stats["cooking"],
-        'inspiration':self.stats["inspiration"], 'scrapper':self.stats["scrapper"],
-        'barter':self.stats["barter"], 'electrician':self.stats["electician"]
-        }
-        """
         if choice in choice_dict.keys():
             choice_dict[choice] += 1
         else:
             print_line("Invalid choice")
             self.level -= 1
             self.level_up()
-
-def character_creation(shell):
-    first_name = shell.get_word("What is your first name?")
-
-    surname    = shell.get_word("What is your surname?")
-    father = Human(surname=surname)
-
-    maiden_name = shell.get_word("What is your mother's maiden name?")
-    mother = Human(surname=maiden_name)
-
-    gender = shell.choose_from("What is your gender?", [('Female', 'F'), ('Male', 'M')])
-
-    return Player(first_name, 0, father, mother, 21, sex)

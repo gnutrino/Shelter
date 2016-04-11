@@ -89,7 +89,23 @@ class GameShell(object):
         print(end, end='', flush=True)
         self._sleep(speed)
 
+    def get_name(self, prompt):
+        """
+        Keeps outputting prompt and reading input until user enters a single
+        name
 
+        Arguments:
+        prompt - prompt to print
+
+        Returns:
+        name -- the inputted name
+        """
+        while True:
+            line = self.readline(prompt + ' ')
+            if len(line.split()) == 1:
+                return line
+
+            self.print_line("Please enter a single word")
 
     def choose_from(self, text, choices):
         """
