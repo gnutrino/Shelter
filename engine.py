@@ -100,7 +100,5 @@ def mainloop(screen, shell=None):
             shell.set_completer(None)
 
 if __name__ == "__main__":
-    from game import Game
-    from actions import ActionLoop
-    game = Game()
-    mainloop(ActionLoop(game))
+    from menu import main_menu
+    mainloop(main_menu)
