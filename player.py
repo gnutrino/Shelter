@@ -46,7 +46,16 @@ class Player(Human):
 
         return cls(first_name, surname, gender, age)
         
-    def level_up(self):
+    def level_up(self, shell, stack):
+        """Player specific level up"""
+        #TODO: implement perk increases
+
+        return super().level_up(shell, stack)
+
+
+        shell.print_line("{} has gained enough experience to level up!!!".format(self))
+        shell.print_line(*self.details, sep='\n')
+        self.level += 1
         super().level_up()
         print_line("\n")
         print_line("You can level up any of these attributes: ")
@@ -66,3 +75,4 @@ class Player(Human):
             print_line("Invalid choice")
             self.level -= 1
             self.level_up()
+        return None

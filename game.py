@@ -4,6 +4,7 @@ Main screens and classes for the game
 from player import Player
 from room import Room
 from shelter import Shelter, generate_dwellers
+from engine import Sequence
 
 class GameScreen(object):
     """
@@ -46,7 +47,20 @@ class StartDay(GameScreen):
 
         #TODO: Trader logic
 
-        return ActionLoop(gs)
+        return Sequence(LevelUps(gs), ActionLoop(gs))
+
+class LevelUps(GameScreen):
+    """
+    apply any pending level ups
+    """
+
+    def __call__(self, shell, stack):
+        for person in self.gs.shelter.people:
+            if person.has_levelup():
+                stack.push(self)
+                return person.level_up
+
+        return None
 
 def new_game(shell, stack):
     """

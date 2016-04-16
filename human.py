@@ -1,5 +1,6 @@
 """Module containing all Human classes."""
 from general_funcs import print_line, SLOW, FAST, NORMAL
+from collections import OrderedDict
 
 class Human(object):
     """Basic class for all humans in game."""
@@ -27,6 +28,7 @@ class Human(object):
 
         self.gender = gender.upper()
         self.day_of_birth = day_of_birth
+        self.age = age
 
         self.father = father
         self.mother = mother
@@ -39,13 +41,15 @@ class Human(object):
         # The stats of the person. Affects the production of
         # room the person has been assigned to.
         # TODO: randomise starting stats for NPCs
-        self.stats = {"strength": 1,
-                      "perception": 1,
-                      "endurance": 1,
-                      "charisma": 1,
-                      "intelligence": 1,
-                      "luck": 1
-                     }
+        self.stats = OrderedDict((
+                    ("strength",     1),
+                    ("perception",   1),
+                    ("endurance",    1),
+                    ("charisma",     1),
+                    ("intelligence", 1),
+                    ("agility",      1),
+                    ("luck",         1),
+                ))
 
         self.work_room = None
         self.children = []
@@ -61,20 +65,30 @@ class Human(object):
         """
         return "{} {}".format(self.first_name, self.surname)
 
-    def print_(self):
-        """Print name and attributes."""
-        print_line("\n")
-        print_line(
-            self,
-            "\n  Age:  {}".format(self.age) +
-            "  Gender: {}".format(self.gender) +
-            "  Hunger: {}".format(self.hunger) +
-            "  Thirst: {}".format(self.thirst) +
-            "  Room:   {}".format(self.assigned_room), 
-            speed = FAST)
-        for stat in self.stats.keys():
-            print_line("   " + stat + " : " + str(self.stats[stat]))
-        print_line("\n")
+    def details(self):
+        """returns a list of lines to output showing details of this person"""
+        result = [
+                str(self),
+                "Age: {0.age} | Gender: {0.gender} | Hunger: {0.hunger} | Thirst: {0.thirst} | Room: {0.work_room}".format(self),
+                ]
+
+        for stat, value in self.stats.items():
+            result.append("    {} : {}".format(stat, value))
+
+        return result
+
+    def stat(self, stat):
+        """
+        Returns the value of stat for this character
+
+        Arguments:
+        stat -- name of the stat to fetch
+
+        Returns:
+        int -- value of the requested stat
+        """
+        return self.stats[stat]
+
 
     def update(self, shell, gamestate):
         """stub function to contain daily code for people"""
@@ -105,34 +119,30 @@ class Human(object):
         if self.thirst < 0:
             self.thirst = 0
     
-    def level_up(self):
-        """Level up Human and ask player for input on what stat to level up."""
-        print_line("{} has gained enough experience to level up!!!".format(self))
-        self.see_stats()
+    def level_up(self, shell, stack):
+        """Generic level up screen"""
+        if not self.has_levelup():
+            return None
+
+        shell.print_line("{} has gained enough experience to level up!!!".format(self))
+        shell.print_line(*self.details(), sep='\n')
         self.level += 1
-        choice_dict = {
-            'strength':self.stats["strength"],
-            'perception':self.stats["perception"],
-            'endurance':self.stats["endurance"],
-            'charisma':self.stats["charisma"],
-            'intelligence':self.stats["intelligence"], 
-            'luck':self.stats["luck"]
-            }
-        #This method is overridden and super() is called by both subclasses of the Human class.
-            
-            
+
+        choices = [("{} (current: {})".format(stat, value), stat) for stat, value in self.stats.items()]
+        choice = shell.choose_from("Choose an attribute to increase:", choices)
+        self.stats[choice] += 1
+
+        #continue levelling up if we have the xp for it
+        return self.level_up
     
-    def check_xp(self):
+    def has_levelup(self):
         """Check experience of inhabitant is enough to level up.
 
         Returns:
         bool -- whether or not Human can level up"""
         # Xp needed to level up increases exponentially
         xp_needed = 10 + (3**self.level)
-        if self.XP >= xp_needed:
-            return True
-        else:
-            return False
+        return self.XP >= xp_needed
             
     def gain_xp(self, amount):
         """Increase experience of person. If they have enough to level 
@@ -142,8 +152,6 @@ class Human(object):
         amount -- amount to level up by
         """
         self.XP += amount
-        while self.check_xp():
-            self.level_up()
     
     def heal(self, amount):
         """Heal Human.
@@ -262,22 +270,13 @@ class NPC(Human):
         super().__init__(first_name, surname, gender, age, day_of_birth,
                          father, mother)
 
+        #testing level up system
+        self.XP = 500
+
         self.current_activity = ""
         self.days_active = 0
         self.activity_limit = 0
         self.scavenging = False
         self.days_scavenging = 0
         self.days_to_scavenge_for = 0
-    
-    def level_up(self):
-        super().level_up()
-        for stat in choice_dict.keys():
-            print_line(" {}".format(stat), end = " ")
-        choice = input("Please choose an attribute to level up: ")
-        choice.lower()
-        if choice in choice_dict:
-            choice_dict[choice] += 1
-        else:
-            print_line("\nInvalid choice.\n")
-            self.level -= 1
-            self.level_up()
+

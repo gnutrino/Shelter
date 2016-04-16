@@ -97,5 +97,5 @@ def mainloop(screen, shell=None):
             screen = None
 
 if __name__ == "__main__":
-    from menu import main_menu
-    mainloop(main_menu)
+    from game import new_game
+    mainloop(new_game)
