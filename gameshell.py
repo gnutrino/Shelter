@@ -35,7 +35,8 @@ class GameShell(object):
 
         #can't get any readline library, default to standard IO
         except ImportError:
-            pass
+            self._has_readline = False
+            self._readline = None
 
         self.speed = 'fast'
 
@@ -122,7 +123,7 @@ class GameShell(object):
             try:
                 return int(line)
             except ValueError:
-                self.print_line("Please enter and integer")
+                self.print_line("Please enter an integer")
                 continue
 
     def choose_from(self, text, choices):
@@ -226,7 +227,8 @@ class GameShell(object):
         Initialise the readline library
         """
         #TODO: specify histfile location using appdirs
-        self._readline.parse_and_bind("tab: completion")
+        self._readline.parse_and_bind("tab: complete")
+        self._readline.set_completer_delims('')
 
 
     def _sleep(self, speed=None):

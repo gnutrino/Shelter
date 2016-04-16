@@ -86,7 +86,7 @@ def mainloop(screen, shell=None):
         screen_stack.current_screen = screen
 
         if hasattr(screen, 'complete'):
-            shell.set_completer(screen.complete())
+            shell.set_completer(screen.complete)
 
         try:
             screen = screen(shell, screen_stack)
@@ -95,6 +95,9 @@ def mainloop(screen, shell=None):
             #screen
             shell.print_line()
             screen = None
+        finally:
+            #removes any set completer
+            shell.set_completer(None)
 
 if __name__ == "__main__":
     from game import Game
