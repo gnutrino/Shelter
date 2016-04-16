@@ -69,6 +69,12 @@ class ActionLoop(object):
         stack.push(self)
         return action
 
+    def handle_eof(self, shell, stack):
+        """Used to handle EOF Exception in mainloop, returns the quit action to
+        correctly give confirmation dialogue"""
+        stack.push(self)
+        return self.get_action("quit")(self.game)
+
     def get_action(self, name):
         """get action by name, also checks aliases"""
         for action in self.actions:

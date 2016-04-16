@@ -101,10 +101,14 @@ def mainloop(screen, shell=None):
         try:
             screen = screen(shell, screen_stack)
         except EOFError:
-            #if we recieve EOF we take this as a sign we want to move back a
-            #screen
             shell.print_line()
-            screen = None
+            #if screen defines a way to handle EOF use that
+            if hasattr(screen, 'handle_eof'):
+                screen = screen.handle_eof(shell, screen_stack)
+            else:
+                #otherwiseF we take this as a sign we want to move back a
+                #screen
+                screen = None
         finally:
             #removes any set completer
             shell.set_completer(None)
