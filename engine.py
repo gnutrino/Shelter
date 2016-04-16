@@ -34,6 +34,29 @@ class ScreenStack(object):
         """
         return self._stack.pop()
 
+class Sequence(object):
+    """
+    Convenience class to represent a sequence of screens where each screen
+    follows sub-screen semantics to move on to the next (i.e returns None).
+    Designed to make sequential screen sequences clearer rather than having to
+    chase return values manually.
+    """
+
+    def __init__(self, *screens):
+        """
+        Initialises the sequence with screens to run
+
+        Arguemnts:
+        *screens -- screens to run as part of the sequnce given in the order
+                    they should be run
+        """
+        self.screens = screens
+
+    def __call__(self, shell, stack):
+        for screen in reversed(self.screens):
+            stack.push(screen)
+        return None
+
 def mainloop(screen, shell=None):
     """
     Runs the mainloop starting from screen. Implements a basic Finite State Machine with
