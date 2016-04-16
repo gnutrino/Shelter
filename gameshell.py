@@ -51,7 +51,7 @@ class GameShell(object):
         Returns:
         string -- line read
         """
-
+        self._sleep()
         return input(prompt)
 
     def print_line(self, *strings, sep='', end="\n", indent=0, speed=None):

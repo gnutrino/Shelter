@@ -92,7 +92,7 @@ class Human(object):
 
     def update(self, shell, gamestate):
         """stub function to contain daily code for people"""
-        print("{}.update is not implemented.".format(type(self).__name__))
+        shell.print_line("{}.update is not implemented.".format(type(self).__name__))
         
     def see_stats(self):
         """Check stats of inhabitant."""
