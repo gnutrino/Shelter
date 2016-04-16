@@ -98,4 +98,6 @@ def mainloop(screen, shell=None):
 
 if __name__ == "__main__":
     from game import Game
-    mainloop(Game.NewGame)
+    from actions import ActionLoop
+    game = Game()
+    mainloop(ActionLoop(game))

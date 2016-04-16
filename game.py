@@ -20,7 +20,7 @@ class Game(object):
         self.day = 0
         self.action_points = 0
 
-        self.player = Player()
+        self.player = None
         self.shelter = Shelter()
 
     ### Screens:
