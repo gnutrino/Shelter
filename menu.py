@@ -1,7 +1,7 @@
 """Menu screens for use with GameShell"""
 from collections import OrderedDict
 
-from game import new_game
+from game import Game
 
 class Menu(object):
 
@@ -42,7 +42,7 @@ settings_menu.add_menu_item("Change Speed", speed_change)
 settings_menu.add_menu_item("Back", back)
 
 main_menu = Menu('Main Menu')
-main_menu.add_menu_item("New Game", new_game)
+main_menu.add_menu_item("New Game", Game.NewGame)
 main_menu.add_menu_item("Load Game", load_game)
 main_menu.add_menu_item(settings_menu.name, settings_menu)
 main_menu.add_menu_item("Exit", back)

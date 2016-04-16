@@ -5,92 +5,84 @@ from player import Player
 from room import Room
 from shelter import Shelter, generate_dwellers
 from engine import Sequence
-
-class GameScreen(object):
-    """
-    Base class for screens that hold gamestate
-    """
-
-    def __init__(self, gamestate):
-        self.gs = gamestate
-
-    def __call__(self, shell, stack):
-        raise NotImplementedError()
-
 from actions import ActionLoop
 
-class GameState(object):
+class Game(object):
     """
     Represents the state of a game. This is the class to serialize/deserialize
     to save/load
     """
-    pass
 
-class StartDay(GameScreen):
-    """
-    Starts a new day
-    """
+    def __init__(self):
+        """instantiates Game in the most basic state that won't throw errors if
+        used, actual logic for startign a new game from a gameplay point of
+        view goes in NewGame"""
+        self.day = 0
+        self.action_points = 0
 
-    def __call__(self, shell, stack):
-        gs = self.gs
-        gs.day += 1
+        self.player = Player()
+        self.shelter = Shelter()
+
+    ### Screens:
+
+    @classmethod
+    def NewGame(cls, shell, stack):
+        """
+        Screen for setting up a new game
+        """
+
+        game = cls()
+
+        game.day = 0
+        game.action_points = 0
+
+        #create player
+        game.player = Player.create(shell)
+        game.player.inventory.update({
+                'steel' : 5,
+                'turret': 1,
+                'chip'  : 1,
+            })
+        game.player.caps = 100
+
+        #create and populate shelter
+        game.shelter = Shelter()
+        game.shelter.people = generate_dwellers(5, game)
+
+        #Add some starting rooms
+        game.shelter.rooms = [
+                Room('living'),
+                Room('generator'),
+                Room('water'),
+                Room('kitchen'),
+            ]
+
+        return game.StartDay
+
+    def StartDay(self, shell, stack):
+        """
+        Starts a new day
+        """
+        self.day += 1
 
         #add 50 new action points, capped at 50 total, deals with overspend
         #from the previous day simply by allowing negative action points
-        gs.action_points = min(gs.action_points + 50, 50)
+        self.action_points = min(self.action_points + 50, 50)
 
-        for room in gs.shelter.rooms:
-            room.update(shell, gs)
+        for room in self.shelter.rooms:
+            room.update(shell, self)
 
-        for person in gs.shelter.people:
-            person.update(shell, gs)
+        for person in self.shelter.people:
+            person.update(shell, self)
 
         #TODO: Trader logic
 
-        return Sequence(LevelUps(gs), ActionLoop(gs))
+        return Sequence(self.LevelUps, ActionLoop(self))
 
-class LevelUps(GameScreen):
-    """
-    apply any pending level ups
-    """
+    def LevelUps(self, shell, stack):
+        """
+        apply any pending level ups
+        """
+        return Sequence(*(person.level_up for person in self.shelter.people))
 
-    def __call__(self, shell, stack):
-        for person in self.gs.shelter.people:
-            if person.has_levelup():
-                stack.push(self)
-                return person.level_up
-
-        return None
-
-def new_game(shell, stack):
-    """
-    Screen for setting up a new game
-    """
-
-    gamestate = GameState()
-
-    gamestate.day = 0
-    gamestate.action_points = 0
-
-    #create player
-    gamestate.player = Player.create(shell)
-    gamestate.player.inventory.update({
-            'steel' : 5,
-            'turret': 1,
-            'chip'  : 1,
-        })
-    gamestate.player.caps = 100
-
-    #create and populate shelter
-    gamestate.shelter = Shelter()
-    gamestate.shelter.people = generate_dwellers(5, gamestate)
-
-    #Add some starting rooms
-    gamestate.shelter.rooms = [
-            Room('living'),
-            Room('generator'),
-            Room('water'),
-            Room('kitchen'),
-        ]
-
-    return StartDay(gamestate)
+    ### End of Screens

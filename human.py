@@ -270,9 +270,6 @@ class NPC(Human):
         super().__init__(first_name, surname, gender, age, day_of_birth,
                          father, mother)
 
-        #testing level up system
-        self.XP = 500
-
         self.current_activity = ""
         self.days_active = 0
         self.activity_limit = 0
