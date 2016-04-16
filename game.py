@@ -64,6 +64,7 @@ class Game(object):
         Starts a new day
         """
         self.day += 1
+        shell.print_line("A new day dawns. It is now day {} in the vault".format(self.day))
 
         #add 50 new action points, capped at 50 total, deals with overspend
         #from the previous day simply by allowing negative action points

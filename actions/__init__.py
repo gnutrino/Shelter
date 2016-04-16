@@ -7,12 +7,12 @@ class Action(object):
 
     def parse_args(self, args):
         """
-        Parse the arg string and set up the action as appropriate
+        Parse the arg string and set up and return the action to run
 
         Arguments:
         args -- the argument string, unsplit
         """
-        pass
+        return self
 
     def __str__(self):
         return self.name
@@ -65,7 +65,7 @@ class ActionLoop(object):
             return self
 
         action = action(self.game)
-        action.parse_args(args)
+        action = action.parse_args(args)
         stack.push(self)
         return action
 
@@ -105,15 +105,7 @@ class ActionLoop(object):
         matches.append(None)
         return matches[state]
 
-class Quit(Action):
-    """
-    Quits the game
-    """
-    name = "quit"
-    aliases = ["exit"]
-
-    def __call__(self, shell, stack):
-        stack.pop()
-        return None
-
+#Add actions to loop
+from .general import *
 ActionLoop.add_action(Quit)
+ActionLoop.add_action(Skip)
