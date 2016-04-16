@@ -43,6 +43,11 @@ class ActionLoop(object):
         cls.actions.append(action)
 
     def __call__(self, shell, stack):
+        game = self.game
+        if game.action_points <= 0:
+            return game.StartDay
+
+        shell.print_line("{} action points remaining.".format(game.action_points))
         line = shell.readline("> ")
         if not line.strip():
             return self
