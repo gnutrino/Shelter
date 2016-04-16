@@ -51,11 +51,21 @@ class Sequence(object):
                     they should be run
         """
         self.screens = screens
+        self.index = 0
+
+    def reset(self):
+        """Resets the sequence back to the beginning"""
+        self.index = 0
 
     def __call__(self, shell, stack):
-        for screen in reversed(self.screens):
-            stack.push(screen)
-        return None
+        if self.index >= len(self.screens):
+                return None
+
+        screen = self.screens[self.index]
+        self.index += 1
+        stack.push(self)
+        return screen
+
 
 def mainloop(screen, shell=None):
     """
