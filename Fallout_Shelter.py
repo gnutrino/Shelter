@@ -7,7 +7,8 @@ import pickle
 import sys
 import os
 
-from human import Human, Player, NPC
+from human import Human, NPC
+from player import Player
 from room import Room, all_rooms
 from item import Item, Inventory, all_items
 
@@ -38,7 +39,7 @@ class Game(object):
     def __init__(self):
         """Initilize main game system."""
         self.setup_player()
-        self.all_items = all_items()  # Fetches all items from items.json
+        self.all_items = all_items  # Fetches all items from items.json
         self.all_rooms = all_rooms()  # Fetches all items from rooms.json
         self.inventory = Inventory(self.all_items)
         self.inventory['turret'] += 1
@@ -152,13 +153,13 @@ class Game(object):
         while True:
             name = input("What is the surname of your father? ")
             if validate_name(name):
-                father = Human(surname=name)
+                surname = name
                 break
             print_line(invalid_name)
         while True:
             name = input("What is the surname of your mother? ")
             if validate_name(name):
-                mother = Human(surname=name)
+                mother = name
                 break
             print_line(invalid_name)
         while True:
@@ -167,7 +168,7 @@ class Game(object):
                 gender = gender.upper()
                 break
             print_line("Invalid gender.")
-        self.player = Player(first_name, 0, father, mother, 21, gender)
+        self.player = Player(first_name, surname, gender, 21)
 
     def first_few(self):
         """Create first few inhabitants with random names."""
@@ -200,12 +201,10 @@ class Game(object):
                 continue
             self.people["{} {}".format(names[num_1], names[num_2])] = NPC(
                     names[num_1],
-                    self.days,
-                    None,
-                    "Alena",
-                    21,
+                    names[num_2],
                     get_gender(),
-                    names[num_2])
+                    self.days,
+                )
             used_names.append(names[num_1])
             used_names.append(names[num_2])
 
@@ -256,7 +255,7 @@ class Game(object):
             
             self = action_auto_feed_all(game)
             for person in self.people.values(): #People loop
-                if person.check_xp():
+                if person.has_levelup():
                     person.level_up()
                 person.increase_hunger(10)
                 if person.hunger > 99:
@@ -414,9 +413,10 @@ def action_see_people(game, *args):
     Arguments:
     game -- Main game object
     """
-    game.player.print_()
-    for person in game.people.values():
-        person.print_()
+    pass
+    #game.player.print_()
+    #for person in game.people.values():
+        #person.print_()
 
 
 def action_see_inventory(game, inventory):
