@@ -2,6 +2,8 @@
 from general_funcs import print_line, SLOW, FAST, NORMAL
 from collections import OrderedDict
 
+import player
+
 class Human(object):
     """Basic class for all humans in game."""
 
@@ -90,9 +92,29 @@ class Human(object):
         return self.stats[stat]
 
 
-    def update(self, shell, gamestate):
-        """stub function to contain daily code for people"""
-        shell.print_line("{}.update is not implemented.".format(type(self).__name__))
+    def update(self, shell, game):
+        """Run once a day"""
+        self.hunger += 10
+
+        if self.hunger >= 100:
+            shell.print_line("{} has starved to death :(".format(self))
+            self.die(game)
+        elif self.hunger > 80:
+            shell.print_line("Warning! {} is starving and may die soon".format(self))
+        elif self.hunger > 50:
+            shell.print_line("{} is hungry".format(self))
+
+        self.thirst += 20
+
+        if self.thirst >= 100:
+            shell.print_line("{} has died of thirst :(".format(self))
+            self.die(game)
+        elif self.thirst > 80:
+            shell.print_line("Warning! {} is extremely thristy and may die soon".format(self))
+        elif self.thirst > 50:
+            shell.print_line("{} is thirsty".format(self))
+
+        #TODO: Handle scavenging, guarding etc.
         
     def see_stats(self):
         """Check stats of inhabitant."""
@@ -235,20 +257,17 @@ class Human(object):
                 return False
         return True
 
-    def die(self, game, cause):
+    def die(self, game):
         """Kill self, and unassign from a assigned room.
             #Should make this a method of the main game.
         Arguments:
         game -- main game object
-        cause -- cause of death
         """
-        print_line("{} has died of {}!".format(self, cause))
-        if self.assigned_room:
-            game.rooms[self.assigned_room].remove(str(self))
-        if not isinstance(self, Player):
-            pass
-        else:
+        if self.work_room is not None:
+            game.shelter.unassign(self)
+        if isinstance(self, player.Player):
             self.alive = False
+        game.shelter.people.remove(self)
 
 
 class NPC(Human):

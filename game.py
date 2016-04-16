@@ -73,7 +73,7 @@ class Game(object):
         for room in self.shelter.rooms:
             room.update(shell, self)
 
-        for person in self.shelter.people:
+        for person in self.shelter.people[:]:
             person.update(shell, self)
 
         #TODO: Trader logic
