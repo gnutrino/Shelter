@@ -37,7 +37,7 @@ class GameShell(object):
         except ImportError:
             pass
 
-        self.speed = 'normal'
+        self.speed = 'fast'
 
     def readline(self, prompt):
         """
